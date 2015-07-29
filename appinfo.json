@@ -1,0 +1,21 @@
+{
+  "uuid": "ed5e22f3-7a02-41c9-93f9-c608989c8af6",
+  "shortName": "SimpleWatchface",
+  "longName": "SimpleWatchface",
+  "companyName": "Florencia Tarditti",
+  "versionLabel": "1.0",
+  "watchapp": {
+    "watchface": true
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": []
+  },
+  "targetPlatforms": [
+    "aplite",
+    "basalt"
+  ],
+  "sdkVersion": "3"
+}
