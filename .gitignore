@@ -1,7 +1,6 @@
 
 # Ignore build generated files
 build
-resources
 wscript
 
 # Ignore waf lock file
