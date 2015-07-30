@@ -17,6 +17,11 @@
         "name": "FONT_PERFECT_DOS_48",
         "file": "fonts/perfect-dos-vga.ttf",
         "compatibility": "2.7"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_BACKGROUND",
+        "file": "images/fez5.png"
       }
     ]
   },
