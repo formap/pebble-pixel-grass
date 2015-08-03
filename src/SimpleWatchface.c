@@ -6,6 +6,8 @@
 static Window *s_main_window;
 
 static TextLayer *s_time_layer;
+static TextLayer *s_date_layer;
+static TextLayer *s_battery_layer;
 static TextLayer *s_weather_layer;
 
 static GFont s_time_font;
@@ -26,6 +28,22 @@ static void update_time() {
   }
 
   text_layer_set_text(s_time_layer, buffer);
+
+  static char bufferDate[] = "00 MON";
+
+  strftime(bufferDate, sizeof("00 MON"), "%d %a", tick_time);
+  text_layer_set_text(s_date_layer, bufferDate);
+}
+
+static void battery_handler(BatteryChargeState charge_state) {
+  static char s_battery_buffer[16];
+
+  if(charge_state.is_charging) {
+    snprintf(s_battery_buffer, sizeof(s_battery_buffer), "charging");
+  } else {
+    snprintf(s_battery_buffer, sizeof(s_battery_buffer), "%d%%", charge_state.charge_percent);
+  }
+  text_layer_set_text(s_battery_layer, s_battery_buffer);
 }
 
 static void main_window_load(Window *window) {
@@ -45,13 +63,32 @@ static void main_window_load(Window *window) {
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_time_layer));
 
-  s_weather_layer = text_layer_create(GRect(0, 85, 144, 85));
+  s_date_layer = text_layer_create(GRect(5, 71, 139, 71));
+  text_layer_set_background_color(s_date_layer, GColorClear);
+  text_layer_set_text_color(s_date_layer, GColorWhite);
+  text_layer_set_text(s_date_layer, "00 MON");
+
+  text_layer_set_font(s_date_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+  text_layer_set_text_alignment(s_date_layer, GTextAlignmentCenter);
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_date_layer));
+
+  s_battery_layer = text_layer_create(GRect(0, 0, 144, 160));
+  text_layer_set_background_color(s_battery_layer, GColorClear);
+  text_layer_set_text_color(s_battery_layer, GColorWhite);
+  text_layer_set_text(s_battery_layer, "--%");
+
+  text_layer_set_font(s_battery_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
+  text_layer_set_text_alignment(s_battery_layer, GTextAlignmentRight);
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_battery_layer));
+  battery_handler(battery_state_service_peek());
+
+  s_weather_layer = text_layer_create(GRect(0, 90, 144, 90));
   text_layer_set_background_color(s_weather_layer, GColorClear);
   text_layer_set_text_color(s_weather_layer, GColorWhite);
   text_layer_set_text_alignment(s_weather_layer, GTextAlignmentCenter);
   text_layer_set_text(s_weather_layer, "Loading...");
 
-  text_layer_set_font(s_weather_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
+  text_layer_set_font(s_weather_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_text_alignment(s_weather_layer, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_weather_layer));
 
@@ -65,6 +102,10 @@ static void main_window_unload(Window *window) {
 
   fonts_unload_custom_font(s_time_font);
   text_layer_destroy(s_time_layer);
+
+  text_layer_destroy(s_date_layer);
+
+  text_layer_destroy(s_battery_layer);
 
   text_layer_destroy(s_weather_layer);
 }
@@ -145,6 +186,8 @@ static void init() {
   app_message_register_outbox_sent(outbox_sent_callback);
 
   app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
+
+  battery_state_service_subscribe(battery_handler);
 }
 
 static void deinit() {
