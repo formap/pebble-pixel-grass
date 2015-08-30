@@ -53,7 +53,6 @@ function getWeather() {
 
 Pebble.addEventListener('ready', function(e) {
   console.log('PebbleKit JS is ready');
-
   getWeather();
 });
 

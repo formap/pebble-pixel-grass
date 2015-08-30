@@ -1,7 +1,7 @@
 {
   "uuid": "ed5e22f3-7a02-41c9-93f9-c608989c8af6",
-  "shortName": "SimpleWatchface",
-  "longName": "SimpleWatchface",
+  "shortName": "PixelGrass",
+  "longName": "PixelFezGrass",
   "capabilities": [ "location" ],
   "companyName": "Florencia Tarditti",
   "versionLabel": "1.0",
@@ -15,20 +15,13 @@
   "resources": {
     "media": [
       {
-        "type": "font",
-        "name": "FONT_PERFECT_DOS_48",
-        "file": "fonts/perfect-dos-vga.ttf",
-        "compatibility": "2.7"
-      },
-      {
         "type": "png",
         "name": "IMAGE_BACKGROUND",
-        "file": "images/fez5.png"
+        "file": "images/fezGrass.png"
       }
     ]
   },
   "targetPlatforms": [
-    "aplite",
     "basalt"
   ],
   "sdkVersion": "3"
