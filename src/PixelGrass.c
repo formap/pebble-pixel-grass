@@ -29,9 +29,9 @@ static void update_time() {
 
   text_layer_set_text(s_time_layer, buffer);
 
-  static char bufferDate[] = "00 MON";
+  static char bufferDate[] = "MON 00";
 
-  strftime(bufferDate, sizeof("00 MON"), "%d %a", tick_time);
+  strftime(bufferDate, sizeof("MON 00"), "%a %d", tick_time);
   text_layer_set_text(s_date_layer, bufferDate);
 }
 
@@ -65,7 +65,7 @@ static void main_window_load(Window *window) {
   s_date_layer = text_layer_create(GRect(5, 71, 139, 71));
   text_layer_set_background_color(s_date_layer, GColorClear);
   text_layer_set_text_color(s_date_layer, GColorWhite);
-  text_layer_set_text(s_date_layer, "00 MON");
+  text_layer_set_text(s_date_layer, "MON 00");
 
   text_layer_set_font(s_date_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
   text_layer_set_text_alignment(s_date_layer, GTextAlignmentCenter);
