@@ -46,6 +46,34 @@ static void battery_handler(BatteryChargeState charge_state) {
   text_layer_set_text(s_battery_layer, s_battery_buffer);
 }
 
+void on_animation_stopped(Animation *anim, bool finished, void *context) {
+    property_animation_destroy((PropertyAnimation*) anim);
+}
+
+void animate_layer(Layer *layer, GRect *start, GRect *finish, int duration, int delay) {
+
+    PropertyAnimation *anim = property_animation_create_layer_frame(layer, start, finish);
+
+    animation_set_duration((Animation*) anim, duration);
+    animation_set_delay((Animation*) anim, delay);
+
+    AnimationHandlers handlers = {
+        .stopped = (AnimationStoppedHandler) on_animation_stopped
+    };
+    animation_set_handlers((Animation*) anim, handlers, NULL);
+
+    animation_schedule((Animation*) anim);
+}
+
+static void init_animations() {
+  GRect timestart = GRect(5, -60, 139, 48);
+	GRect timefinish = GRect(5, 30, 139, 48);
+
+  int animlen = 800;
+
+	animate_layer(text_layer_get_layer(s_time_layer), &timestart, &timefinish, animlen, 0);
+}
+
 static void main_window_load(Window *window) {
 
   s_background_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND);
@@ -53,7 +81,7 @@ static void main_window_load(Window *window) {
   bitmap_layer_set_bitmap(s_background_layer, s_background_bitmap);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_background_layer));
 
-  s_time_layer = text_layer_create(GRect(5, 30, 139, 48));
+  s_time_layer = text_layer_create(GRect(5, -60, 139, 48));
   text_layer_set_background_color(s_time_layer, GColorClear);
   text_layer_set_text_color(s_time_layer, GColorWhite);
   text_layer_set_text(s_time_layer, "00:00");
@@ -183,6 +211,8 @@ static void init() {
   app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
 
   battery_state_service_subscribe(battery_handler);
+
+  init_animations();
 }
 
 static void deinit() {
