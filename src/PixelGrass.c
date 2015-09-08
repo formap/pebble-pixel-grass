@@ -1,7 +1,7 @@
 #include <pebble.h>
 
-#define KEY_TEMPERATURE 0
-#define KEY_CONDITIONS 1
+#define KEY_TEMPERATURE 99
+
 
 static Window *s_main_window;
 
@@ -175,8 +175,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
       case KEY_TEMPERATURE:
         snprintf(temperature_buffer, sizeof(temperature_buffer), "%dC", (int)t->value->int32);
         break;
-      case KEY_CONDITIONS:
-        snprintf(conditions_buffer, sizeof(conditions_buffer), "%s", t->value->cstring);
         break;
       default:
         APP_LOG(APP_LOG_LEVEL_ERROR, "Key %d not recognized", (int)t->key);

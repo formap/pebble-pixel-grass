@@ -19,12 +19,8 @@ function locationSuccess(pos) {
       var temperature = Math.round(json.main.temp - 273.15);
       console.log('Temperature is ' + temperature);
 
-      var conditions = json.weather[0].main;
-      console.log('Conditions are ' + conditions);
-
       var dictionary = {
         'KEY_TEMPERATURE': temperature,
-        'KEY_CONDITIONS': conditions
       };
 
       Pebble.sendAppMessage(dictionary,
