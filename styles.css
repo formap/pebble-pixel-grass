@@ -1,0 +1,21 @@
+body, html {
+  width: 100%;
+  height: 100%;
+  padding-left: 2%;
+  padding-right: 2%;
+}
+
+h2 {
+  color: #666;
+}
+
+#saveButton {
+  background-color: #F9492B;
+  color: white;
+  font-weight: bold;
+}
+
+#cancelButton {
+  color: #666;
+  font-weight: bold;
+}
