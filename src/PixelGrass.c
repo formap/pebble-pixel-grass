@@ -2,7 +2,6 @@
 
 #define KEY_TEMPERATURE 99
 
-
 static Window *s_main_window;
 
 static TextLayer *s_time_layer;
@@ -14,6 +13,16 @@ static GFont s_time_font;
 
 static BitmapLayer *s_background_layer;
 static GBitmap *s_background_bitmap;
+
+static bool KEY_VIBRATIONS;
+static int KEY_START_HOUR;
+static int KEY_END_HOUR;
+
+enum MessageKeys {
+  MK_KEY_VIBRATIONS = 5,
+  MK_KEY_START_HOUR = 7,
+  MK_KEY_END_HOUR = 22
+};
 
 static void update_time() {
   time_t temp = time(NULL);
@@ -30,9 +39,28 @@ static void update_time() {
   text_layer_set_text(s_time_layer, buffer);
 
   static char bufferDate[] = "MON 00";
-
   strftime(bufferDate, sizeof("MON 00"), "%a %d", tick_time);
   text_layer_set_text(s_date_layer, bufferDate);
+
+  APP_LOG(APP_LOG_LEVEL_INFO, "Update time.");
+  int currentMin = tick_time->tm_min;
+  if (KEY_VIBRATIONS) {
+    APP_LOG(APP_LOG_LEVEL_INFO, "key vibrations true");
+    if (currentMin >= KEY_START_HOUR && currentMin <= KEY_END_HOUR) {
+      APP_LOG(APP_LOG_LEVEL_INFO, "vibrating");
+      vibes_double_pulse();
+    }
+  }
+  /*
+  int currentHour = tick_time->tm_hour;
+  if (tick_time->tm_min == 0) {
+    if (KEY_VIBRATIONS) {
+      if (currentHour >= KEY_START_HOUR && currentHour <= KEY_END_HOUR) {
+        vibes_double_pulse();
+      }
+    }
+  }
+  */
 }
 
 static void battery_handler(BatteryChargeState charge_state) {
@@ -163,18 +191,51 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
   APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success");
 }
 
+static int getHourInt(char * hourString) {
+
+  int hour = atoi(hourString);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "hour %d", hour);
+  return hour;
+}
+
+static int getMinuteInt(char * hourString) {
+
+  int min = atoi(hourString);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "min %d", min);
+  return min;
+}
+
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   static char temperature_buffer[8];
-  static char conditions_buffer[32];
   static char weather_layer_buffer[32];
 
   Tuple *t = dict_read_first(iterator);
 
   while(t != NULL) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "t: %d", (int) t->key);
     switch(t->key) {
       case KEY_TEMPERATURE:
-        snprintf(temperature_buffer, sizeof(temperature_buffer), "%dC", (int)t->value->int32);
+        snprintf(temperature_buffer, sizeof(temperature_buffer), "%dC", (int) t->value->int32);
         break;
+      case MK_KEY_VIBRATIONS:
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Changed vibrations to on or off");
+        if (strcmp(t->value->cstring, "on") == 0) {
+          KEY_VIBRATIONS = true;
+          persist_write_bool(MK_KEY_VIBRATIONS, true);
+        } else {
+          KEY_VIBRATIONS = false;
+          persist_write_bool(MK_KEY_VIBRATIONS, false);
+        }
+        break;
+      case MK_KEY_START_HOUR:
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Start hour changed");
+        KEY_START_HOUR = getMinuteInt(t->value->cstring);
+        persist_write_string(MK_KEY_START_HOUR, t->value->cstring);
+        break;
+      case MK_KEY_END_HOUR:
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "End hour changed");
+        KEY_END_HOUR = getMinuteInt(t->value->cstring);
+        persist_write_string(MK_KEY_END_HOUR, t->value->cstring);
         break;
       default:
         APP_LOG(APP_LOG_LEVEL_ERROR, "Key %d not recognized", (int)t->key);
@@ -189,6 +250,31 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 }
 
 static void init() {
+
+  char * strBuffer = "--";
+
+  if (persist_exists(MK_KEY_VIBRATIONS)) {
+    KEY_VIBRATIONS = persist_read_bool(MK_KEY_VIBRATIONS);
+  }
+  else {
+    KEY_VIBRATIONS = false;
+  }
+
+  if (persist_exists(MK_KEY_START_HOUR)) {
+    persist_read_string(MK_KEY_START_HOUR, strBuffer, sizeof(strBuffer));
+    KEY_START_HOUR = getMinuteInt(strBuffer);
+  }
+  else {
+    KEY_START_HOUR = 7;
+  }
+
+  if (persist_exists(MK_KEY_END_HOUR)) {
+    persist_read_string(MK_KEY_END_HOUR, strBuffer, sizeof(strBuffer));
+    KEY_END_HOUR = getMinuteInt(strBuffer);
+  }
+  else {
+    KEY_END_HOUR = 22;
+  }
 
   s_main_window = window_create();
 

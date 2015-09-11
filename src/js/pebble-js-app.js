@@ -56,3 +56,33 @@ Pebble.addEventListener('appmessage', function(e) {
   console.log('AppMessage received');
   getWeather();
 });
+
+Pebble.addEventListener('showConfiguration', function(e) {
+  var data = JSON.parse(window.localStorage.getItem('pebblePixelGrassData'))
+  console.log("show configurations")
+  console.log("vibrations: " + data.KEY_VIBRATIONS)
+  console.log("start hour: " + data.KEY_START_HOUR)
+  console.log("end hour: " + data.KEY_END_HOUR)
+  var configURL = 'http://florenciatarditti.me/pebble-pixel-grass/'
+  if (data !== null) {
+    configURL += '?&KEY_VIBRATIONS=' + encodeURIComponent(data['KEY_VIBRATIONS']) +
+                  '&KEY_START_HOUR=' + encodeURIComponent(data['KEY_START_HOUR']) +
+                  '&KEY_END_HOUR=' + encodeURIComponent(data['KEY_END_HOUR'])
+  }
+  Pebble.openURL(configURL)
+})
+
+Pebble.addEventListener('webviewclosed', function(e) {
+  var data = JSON.parse(decodeURIComponent(e.response))
+  console.log("webview closed")
+  console.log("vibrations: " + data.KEY_VIBRATIONS)
+  console.log("start hour: " + data.KEY_START_HOUR)
+  console.log("end hour: " + data.KEY_END_HOUR)
+  window.localStorage.setItem('pebblePixelGrassData', JSON.stringify(data))
+  Pebble.sendAppMessage(data, function(e) {
+      console.log("JSON data sent to Pebble")
+    }, function(e) {
+      console.log("JSON data not sent to Pebble. Error message: " + e.error.message)
+    }
+  )
+})
