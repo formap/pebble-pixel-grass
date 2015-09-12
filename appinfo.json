@@ -8,8 +8,14 @@
   "watchapp": {
     "watchface": true
   },
+  "capabilities": [
+    "configurable"
+  ],
   "appKeys": {
     "KEY_TEMPERATURE": 99,
+    "KEY_VIBRATIONS": 5,
+    "KEY_START_HOUR": 7,
+    "KEY_END_HOUR": 22
   },
   "resources": {
     "media": [
