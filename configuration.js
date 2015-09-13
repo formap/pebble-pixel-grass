@@ -1,6 +1,6 @@
 function appendHours () {
   var hour
-  for (var i = 0; i < 60; ++i) {
+  for (var i = 0; i < 24; ++i) {
     hour = i + ':00'
     $('#startHour').append('<option value="' + i + '">' + hour + '</option>')
     $('#endHour').append('<option value="' + i + '">' + hour + '</option>')
