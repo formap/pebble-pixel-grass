@@ -94,8 +94,8 @@ void animate_layer(Layer *layer, GRect *start, GRect *finish, int duration, int 
 }
 
 static void init_animations() {
-  GRect timestart = GRect(5, -60, 139, 48);
-	GRect timefinish = GRect(5, 30, 139, 48);
+  GRect timestart = GRect(0, -60, 144, 168);
+	GRect timefinish = GRect(0, 30, 144, 168);
 
   int animlen = 800;
 
@@ -109,7 +109,7 @@ static void main_window_load(Window *window) {
   bitmap_layer_set_bitmap(s_background_layer, s_background_bitmap);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_background_layer));
 
-  s_time_layer = text_layer_create(GRect(5, -60, 139, 48));
+  s_time_layer = text_layer_create(GRect(0, -60, 144, 168));
   text_layer_set_background_color(s_time_layer, GColorClear);
   text_layer_set_text_color(s_time_layer, GColorWhite);
   text_layer_set_text(s_time_layer, "00:00");
@@ -118,7 +118,7 @@ static void main_window_load(Window *window) {
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_time_layer));
 
-  s_date_layer = text_layer_create(GRect(5, 71, 139, 71));
+  s_date_layer = text_layer_create(GRect(0, 71, 144, 168));
   text_layer_set_background_color(s_date_layer, GColorClear);
   text_layer_set_text_color(s_date_layer, GColorWhite);
   text_layer_set_text(s_date_layer, "MON 00");
@@ -127,7 +127,7 @@ static void main_window_load(Window *window) {
   text_layer_set_text_alignment(s_date_layer, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_date_layer));
 
-  s_battery_layer = text_layer_create(GRect(0, 0, 144, 160));
+  s_battery_layer = text_layer_create(GRect(0, -2, 144, 160));
   text_layer_set_background_color(s_battery_layer, GColorClear);
   text_layer_set_text_color(s_battery_layer, GColorWhite);
   text_layer_set_text(s_battery_layer, "--%");
