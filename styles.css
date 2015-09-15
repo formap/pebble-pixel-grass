@@ -6,6 +6,22 @@ body, html {
   padding-bottom: 2%;
 }
 
+.fezGif {
+  margin-left: 3%;
+  margin-right: 3%;
+  margin-bottom: 5%;
+  -webkit-transform: translate3d(0,0,0);
+  -moz-transform: translate3d(0,0,0);
+  -ms-transform: translate3d(0,0,0);
+  -o-transform: translate3d(0,0,0);
+  transform: translate3d(0,0,0);
+}
+
+.fezGif img {
+  width: 100%;
+  height: 100%;
+}
+
 h2 {
   color: #666;
 }
