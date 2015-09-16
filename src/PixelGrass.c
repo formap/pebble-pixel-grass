@@ -14,11 +14,15 @@ static GFont s_time_font;
 static BitmapLayer *s_background_layer;
 static GBitmap *s_background_bitmap;
 
+static int currentTemp;
+
+static char* KEY_WEATHER_UNITS;
 static bool KEY_VIBRATIONS;
 static int KEY_START_HOUR;
 static int KEY_END_HOUR;
 
 enum MessageKeys {
+  MK_KEY_WEATHER_UNITS = 6,
   MK_KEY_VIBRATIONS = 5,
   MK_KEY_START_HOUR = 7,
   MK_KEY_END_HOUR = 22
@@ -42,16 +46,6 @@ static void update_time() {
   strftime(bufferDate, sizeof("MON 00"), "%a %d", tick_time);
   text_layer_set_text(s_date_layer, bufferDate);
 
-  APP_LOG(APP_LOG_LEVEL_INFO, "Update time.");
-  int currentMin = tick_time->tm_min;
-  if (KEY_VIBRATIONS) {
-    APP_LOG(APP_LOG_LEVEL_INFO, "key vibrations true");
-    if (currentMin >= KEY_START_HOUR && currentMin <= KEY_END_HOUR) {
-      APP_LOG(APP_LOG_LEVEL_INFO, "vibrating");
-      vibes_double_pulse();
-    }
-  }
-  /*
   int currentHour = tick_time->tm_hour;
   if (tick_time->tm_min == 0) {
     if (KEY_VIBRATIONS) {
@@ -60,7 +54,6 @@ static void update_time() {
       }
     }
   }
-  */
 }
 
 static void battery_handler(BatteryChargeState charge_state) {
@@ -198,24 +191,45 @@ static int getHourInt(char * hourString) {
   return hour;
 }
 
-static int getMinuteInt(char * hourString) {
+static void updateTemperature() {
+  static char temperature_buffer[8];
+  static char weather_layer_buffer[32];
 
-  int min = atoi(hourString);
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "min %d", min);
-  return min;
+  if(strcmp(KEY_WEATHER_UNITS, "f") == 0) {
+    int temperature = currentTemp;
+    temperature = temperature*1.8+32;
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "temperature: %d", temperature);
+    snprintf(temperature_buffer, sizeof(temperature_buffer), "%dF", temperature);
+  } else {
+    snprintf(temperature_buffer, sizeof(temperature_buffer), "%dC", currentTemp);
+  }
+
+  snprintf(weather_layer_buffer, sizeof(weather_layer_buffer), "%s", temperature_buffer);
+  text_layer_set_text(s_weather_layer, weather_layer_buffer);
 }
 
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
-  static char temperature_buffer[8];
-  static char weather_layer_buffer[32];
 
   Tuple *t = dict_read_first(iterator);
 
   while(t != NULL) {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "t: %d", (int) t->key);
+
     switch(t->key) {
       case KEY_TEMPERATURE:
-        snprintf(temperature_buffer, sizeof(temperature_buffer), "%dC", (int) t->value->int32);
+        currentTemp = (int) t->value->int32;
+        updateTemperature();
+        break;
+      case MK_KEY_WEATHER_UNITS:
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Changed weather units");
+        APP_LOG(APP_LOG_LEVEL_DEBUG, t->value->cstring);
+        if (strcmp(t->value->cstring, "f") == 0) {
+          KEY_WEATHER_UNITS = "f";
+          persist_write_string(MK_KEY_WEATHER_UNITS, t->value->cstring);
+        } else {
+          KEY_WEATHER_UNITS = "c";
+          persist_write_string(MK_KEY_WEATHER_UNITS, "c");
+        }
+        updateTemperature();
         break;
       case MK_KEY_VIBRATIONS:
         APP_LOG(APP_LOG_LEVEL_DEBUG, "Changed vibrations to on or off");
@@ -244,14 +258,20 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
     t = dict_read_next(iterator);
   }
-
-  snprintf(weather_layer_buffer, sizeof(weather_layer_buffer), "%s", temperature_buffer);
-  text_layer_set_text(s_weather_layer, weather_layer_buffer);
 }
 
 static void init() {
 
+  char * weatherBuffer = "-";
   char * strBuffer = "--";
+
+  if (persist_exists(MK_KEY_WEATHER_UNITS)) {
+    persist_read_string(MK_KEY_WEATHER_UNITS, weatherBuffer, sizeof(weatherBuffer));
+    KEY_WEATHER_UNITS = weatherBuffer;
+  }
+  else {
+    KEY_WEATHER_UNITS = "c";
+  }
 
   if (persist_exists(MK_KEY_VIBRATIONS)) {
     KEY_VIBRATIONS = persist_read_bool(MK_KEY_VIBRATIONS);

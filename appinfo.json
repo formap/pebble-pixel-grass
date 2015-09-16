@@ -13,6 +13,7 @@
   ],
   "appKeys": {
     "KEY_TEMPERATURE": 99,
+    "KEY_WEATHER_UNITS": 6,
     "KEY_VIBRATIONS": 5,
     "KEY_START_HOUR": 7,
     "KEY_END_HOUR": 22

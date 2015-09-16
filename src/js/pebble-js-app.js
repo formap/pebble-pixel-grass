@@ -65,7 +65,8 @@ Pebble.addEventListener('showConfiguration', function(e) {
   console.log("end hour: " + data.KEY_END_HOUR)
   var configURL = 'http://florenciatarditti.me/pebble-pixel-grass/'
   if (data !== null) {
-    configURL += '?&KEY_VIBRATIONS=' + encodeURIComponent(data['KEY_VIBRATIONS']) +
+    configURL +=  '?&KEY_WEATHER_UNITS=' + encodeURIComponent(data['KEY_WEATHER_UNITS']) +
+                  '&KEY_VIBRATIONS=' + encodeURIComponent(data['KEY_VIBRATIONS']) +
                   '&KEY_START_HOUR=' + encodeURIComponent(data['KEY_START_HOUR']) +
                   '&KEY_END_HOUR=' + encodeURIComponent(data['KEY_END_HOUR'])
   }
@@ -75,10 +76,13 @@ Pebble.addEventListener('showConfiguration', function(e) {
 Pebble.addEventListener('webviewclosed', function(e) {
   var data = JSON.parse(decodeURIComponent(e.response))
   console.log("webview closed")
+  console.log("weather units " + data.KEY_WEATHER_UNITS)
   console.log("vibrations: " + data.KEY_VIBRATIONS)
   console.log("start hour: " + data.KEY_START_HOUR)
   console.log("end hour: " + data.KEY_END_HOUR)
-  window.localStorage.setItem('pebblePixelGrassData', JSON.stringify(data))
+  if (data != undefined) {
+    window.localStorage.setItem('pebblePixelGrassData', JSON.stringify(data))
+  }
   Pebble.sendAppMessage(data, function(e) {
       console.log("JSON data sent to Pebble")
     }, function(e) {
