@@ -4,7 +4,7 @@
   "longName": "PixelFezGrass",
   "capabilities": [ "location" ],
   "companyName": "Florencia Tarditti",
-  "versionLabel": "1.0",
+  "versionLabel": "2.0",
   "watchapp": {
     "watchface": true
   },
