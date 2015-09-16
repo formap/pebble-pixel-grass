@@ -198,7 +198,6 @@ static void updateTemperature() {
   if(strcmp(KEY_WEATHER_UNITS, "f") == 0) {
     int temperature = currentTemp;
     temperature = temperature*1.8+32;
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "temperature: %d", temperature);
     snprintf(temperature_buffer, sizeof(temperature_buffer), "%dF", temperature);
   } else {
     snprintf(temperature_buffer, sizeof(temperature_buffer), "%dC", currentTemp);
@@ -220,8 +219,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         updateTemperature();
         break;
       case MK_KEY_WEATHER_UNITS:
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "Changed weather units");
-        APP_LOG(APP_LOG_LEVEL_DEBUG, t->value->cstring);
         if (strcmp(t->value->cstring, "f") == 0) {
           KEY_WEATHER_UNITS = "f";
           persist_write_string(MK_KEY_WEATHER_UNITS, t->value->cstring);
@@ -232,7 +229,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         updateTemperature();
         break;
       case MK_KEY_VIBRATIONS:
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "Changed vibrations to on or off");
         if (strcmp(t->value->cstring, "on") == 0) {
           KEY_VIBRATIONS = true;
           persist_write_bool(MK_KEY_VIBRATIONS, true);
@@ -242,13 +238,11 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
         }
         break;
       case MK_KEY_START_HOUR:
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "Start hour changed");
-        KEY_START_HOUR = getMinuteInt(t->value->cstring);
+        KEY_START_HOUR = getHourInt(t->value->cstring);
         persist_write_string(MK_KEY_START_HOUR, t->value->cstring);
         break;
       case MK_KEY_END_HOUR:
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "End hour changed");
-        KEY_END_HOUR = getMinuteInt(t->value->cstring);
+        KEY_END_HOUR = getHourInt(t->value->cstring);
         persist_write_string(MK_KEY_END_HOUR, t->value->cstring);
         break;
       default:
@@ -282,7 +276,7 @@ static void init() {
 
   if (persist_exists(MK_KEY_START_HOUR)) {
     persist_read_string(MK_KEY_START_HOUR, strBuffer, sizeof(strBuffer));
-    KEY_START_HOUR = getMinuteInt(strBuffer);
+    KEY_START_HOUR = getHourInt(strBuffer);
   }
   else {
     KEY_START_HOUR = 7;
@@ -290,7 +284,7 @@ static void init() {
 
   if (persist_exists(MK_KEY_END_HOUR)) {
     persist_read_string(MK_KEY_END_HOUR, strBuffer, sizeof(strBuffer));
-    KEY_END_HOUR = getMinuteInt(strBuffer);
+    KEY_END_HOUR = getHourInt(strBuffer);
   }
   else {
     KEY_END_HOUR = 22;

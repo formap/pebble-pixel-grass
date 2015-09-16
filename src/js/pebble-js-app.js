@@ -15,9 +15,7 @@ function locationSuccess(pos) {
   xhrRequest(url, 'GET',
     function(responseText) {
       var json = JSON.parse(responseText);
-
       var temperature = Math.round(json.main.temp - 273.15);
-      console.log('Temperature is ' + temperature);
 
       var dictionary = {
         'KEY_TEMPERATURE': temperature,
@@ -59,10 +57,6 @@ Pebble.addEventListener('appmessage', function(e) {
 
 Pebble.addEventListener('showConfiguration', function(e) {
   var data = JSON.parse(window.localStorage.getItem('pebblePixelGrassData'))
-  console.log("show configurations")
-  console.log("vibrations: " + data.KEY_VIBRATIONS)
-  console.log("start hour: " + data.KEY_START_HOUR)
-  console.log("end hour: " + data.KEY_END_HOUR)
   var configURL = 'http://florenciatarditti.me/pebble-pixel-grass/'
   if (data !== null) {
     configURL +=  '?&KEY_WEATHER_UNITS=' + encodeURIComponent(data['KEY_WEATHER_UNITS']) +
@@ -75,11 +69,6 @@ Pebble.addEventListener('showConfiguration', function(e) {
 
 Pebble.addEventListener('webviewclosed', function(e) {
   var data = JSON.parse(decodeURIComponent(e.response))
-  console.log("webview closed")
-  console.log("weather units " + data.KEY_WEATHER_UNITS)
-  console.log("vibrations: " + data.KEY_VIBRATIONS)
-  console.log("start hour: " + data.KEY_START_HOUR)
-  console.log("end hour: " + data.KEY_END_HOUR)
   if (data != undefined) {
     window.localStorage.setItem('pebblePixelGrassData', JSON.stringify(data))
   }
