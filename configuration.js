@@ -16,10 +16,12 @@ function urlParam (name) {
 }
 
 function loadUserValues () {
+  var weatherUnits = decodeURIComponent( urlParam("KEY_WEATHER_UNITS"))
   var vibration = decodeURIComponent( urlParam("KEY_VIBRATIONS"))
   var startHour = decodeURIComponent( urlParam("KEY_START_HOUR"))
   var endHour = decodeURIComponent( urlParam("KEY_END_HOUR"))
 
+  $('#weatherUnits [value="' + weatherUnits + '"]').prop('selected', true)
   $('#vibration [value="' + vibration + '"]').prop('selected', true)
   $('#startHour [value="' + startHour + '"]').prop('selected', true)
   $('#endHour [value=' + endHour + ']').prop('selected', true)
@@ -37,11 +39,13 @@ $('#vibration').change(function() {
 })
 
 $('#saveButton').click(function () {
+  var weatherUnits = $('#weatherUnits').val()
   var vibration = $('#vibration').val()
   var startHour = $('#startHour').val()
   var endHour = $('#endHour').val()
 
   var data = {
+    'KEY_WEATHER_UNITS': weatherUnits,
     'KEY_VIBRATIONS': vibration,
     'KEY_START_HOUR': startHour,
     'KEY_END_HOUR': endHour

@@ -24,6 +24,7 @@ body, html {
 
 h1 {
   color: #666;
+  font-weight: bold;
 }
 
 #saveButton {
@@ -33,6 +34,7 @@ h1 {
 }
 
 #cancelButton {
+  margin-bottom: 8%;
   color: #666;
   font-weight: bold;
 }
