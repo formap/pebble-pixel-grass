@@ -13,6 +13,8 @@ static GFont s_time_font;
 
 static BitmapLayer *s_background_layer;
 static GBitmap *s_background_bitmap;
+static BitmapLayer *s_charging_layer;
+static GBitmap *s_charging_bitmap;
 
 static int currentTemp;
 
@@ -60,10 +62,11 @@ static void battery_handler(BatteryChargeState charge_state) {
   static char s_battery_buffer[16];
 
   if(charge_state.is_charging) {
-    snprintf(s_battery_buffer, sizeof(s_battery_buffer), "charging");
+    s_battery_buffer[0] = 0;
   } else {
     snprintf(s_battery_buffer, sizeof(s_battery_buffer), "%d%%", charge_state.charge_percent);
   }
+  layer_set_hidden(bitmap_layer_get_layer(s_charging_layer), !charge_state.is_charging);
   text_layer_set_text(s_battery_layer, s_battery_buffer);
 }
 
@@ -120,7 +123,13 @@ static void main_window_load(Window *window) {
   text_layer_set_text_alignment(s_date_layer, GTextAlignmentCenter);
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_date_layer));
 
-  s_battery_layer = text_layer_create(GRect(0, -2, 144, 160));
+  s_charging_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CHARGING_WHITE);
+  s_charging_layer = bitmap_layer_create(GRect(127, 2, 10, 20));
+  bitmap_layer_set_bitmap(s_charging_layer, s_charging_bitmap);
+  bitmap_layer_set_compositing_mode(s_charging_layer, GCompOpOr);
+  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_charging_layer));
+
+  s_battery_layer = text_layer_create(GRect(0, -1, 141, 160));
   text_layer_set_background_color(s_battery_layer, GColorClear);
   text_layer_set_text_color(s_battery_layer, GColorWhite);
   text_layer_set_text(s_battery_layer, "--%");
@@ -154,6 +163,9 @@ static void main_window_unload(Window *window) {
   text_layer_destroy(s_date_layer);
 
   text_layer_destroy(s_battery_layer);
+
+  gbitmap_destroy(s_charging_bitmap);
+  bitmap_layer_destroy(s_charging_layer);
 
   text_layer_destroy(s_weather_layer);
 }

@@ -24,6 +24,11 @@
         "type": "png",
         "name": "IMAGE_BACKGROUND",
         "file": "images/fezGrass.png"
+      },
+      {
+        "type": "png-trans",
+        "name": "IMAGE_CHARGING",
+        "file": "images/bolt.png"
       }
     ]
   },
