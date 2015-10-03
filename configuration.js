@@ -1,12 +1,3 @@
-function appendHours () {
-  var hour
-  for (var i = 0; i < 24; ++i) {
-    hour = i + ':00'
-    $('#startHour').append('<option value="' + i + '">' + hour + '</option>')
-    $('#endHour').append('<option value="' + i + '">' + hour + '</option>')
-  }
-}
-
 function urlParam (name) {
   var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec( window.location.href)
   if (!results) {
@@ -15,34 +6,46 @@ function urlParam (name) {
   return results[1] || 0
 }
 
-function loadUserValues () {
-  var weatherUnits = decodeURIComponent( urlParam("KEY_WEATHER_UNITS"))
-  var vibration = decodeURIComponent( urlParam("KEY_VIBRATIONS"))
-  var startHour = decodeURIComponent( urlParam("KEY_START_HOUR"))
-  var endHour = decodeURIComponent( urlParam("KEY_END_HOUR"))
-
-  $('#weatherUnits [value="' + weatherUnits + '"]').prop('selected', true)
-  $('#vibration [value="' + vibration + '"]').prop('selected', true)
-  $('#startHour [value="' + startHour + '"]').prop('selected', true)
-  $('#endHour [value=' + endHour + ']').prop('selected', true)
-
+function setSelectValue (id, value) {
+  var element = document.getElementById(id)
+  element.value = value
 }
 
-$('#vibration').change(function() {
-  if ($('#vibration').val() === 'on') {
-    $('#startHour').prop('disabled', false)
-    $('#endHour').prop('disabled', false)
-  } else {
-    $('#startHour').prop('disabled', 'disabled')
-    $('#endHour').prop('disabled', 'disabled')
-  }
-})
+function disableSelect (id, value) {
+  document.getElementById(id).disabled = value
+}
 
-$('#saveButton').click(function () {
-  var weatherUnits = $('#weatherUnits').val()
-  var vibration = $('#vibration').val()
-  var startHour = $('#startHour').val()
-  var endHour = $('#endHour').val()
+function loadUserValues () {
+  var weatherUnits = decodeURIComponent( urlParam("KEY_WEATHER_UNITS"))
+  weatherUnits = (weatherUnits === undefined) ? weatherUnits : 'c'
+  var vibration = decodeURIComponent( urlParam("KEY_VIBRATIONS"))
+  vibration = (vibration === undefined) ? vibration : 'off'
+  var startHour = decodeURIComponent( urlParam("KEY_START_HOUR"))
+  startHour = (startHour === undefined) ? startHour : 9
+  var endHour = decodeURIComponent( urlParam("KEY_END_HOUR"))
+  endHour = (endHour === undefined) ? endHour : 22
+
+  setSelectValue('weatherUnits', weatherUnits)
+  setSelectValue('vibration', vibration)
+  setSelectValue('startHour', startHour)
+  setSelectValue('endHour', endHour)
+}
+
+function onVibrationChanged () {
+  if (document.getElementById('vibration').value === 'on') {
+    disableSelect('startHour', false)
+    disableSelect('endHour', false)
+  } else {
+    disableSelect('startHour', true)
+    disableSelect('endHour', true)
+  }
+}
+
+function saveButton () {
+  var weatherUnits = document.getElementById('weatherUnits').value
+  var vibration = document.getElementById('vibration').value
+  var startHour = document.getElementById('startHour').value
+  var endHour = document.getElementById('endHour').value
 
   var data = {
     'KEY_WEATHER_UNITS': weatherUnits,
@@ -52,15 +55,13 @@ $('#saveButton').click(function () {
   }
 
   document.location = "pebblejs://close#" + encodeURIComponent( JSON.stringify(data))
-})
+}
 
-$('#cancelButton').click(function () {
+function cancelButton () {
   document.location = 'pebblejs://close'
-})
+}
 
-$().ready(function () {
-
-  appendHours()
+(function () {
   loadUserValues()
-  $('#vibration').trigger('change')
-})
+  onVibrationChanged()
+})()

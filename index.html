@@ -22,25 +22,74 @@
     </div>
     <div class="form-group">
       <label>Hourly vibration</label>
-      <select class="form-control" id="vibration">
+      <select class="form-control" id="vibration" onchange="onVibrationChanged()">
         <option value="on">On</option>
         <option value="off">Off</option>
       </select>
     </div>
     <div class="form-group">
       <label>Start hour</label>
-      <select class="form-control" id="startHour"></select>
+      <select class="form-control" id="startHour">
+        <option value="0">0:00</option>
+        <option value="1">1:00</option>
+        <option value="2">2:00</option>
+        <option value="3">3:00</option>
+        <option value="4">4:00</option>
+        <option value="5">5:00</option>
+        <option value="6">6:00</option>
+        <option value="7">7:00</option>
+        <option value="8">8:00</option>
+        <option value="9">9:00</option>
+        <option value="10">10:00</option>
+        <option value="11">11:00</option>
+        <option value="12">12:00</option>
+        <option value="13">13:00</option>
+        <option value="14">14:00</option>
+        <option value="15">15:00</option>
+        <option value="16">16:00</option>
+        <option value="17">17:00</option>
+        <option value="18">18:00</option>
+        <option value="19">19:00</option>
+        <option value="20">20:00</option>
+        <option value="21">21:00</option>
+        <option value="22">22:00</option>
+        <option value="23">23:00</option>
+      </select>
     </div>
     <div class="form-group">
       <label>End hour</label>
-      <select class="form-control" id="endHour"></select>
+      <select class="form-control" id="endHour">
+        <option value="0">0:00</option>
+        <option value="1">1:00</option>
+        <option value="2">2:00</option>
+        <option value="3">3:00</option>
+        <option value="4">4:00</option>
+        <option value="5">5:00</option>
+        <option value="6">6:00</option>
+        <option value="7">7:00</option>
+        <option value="8">8:00</option>
+        <option value="9">9:00</option>
+        <option value="10">10:00</option>
+        <option value="11">11:00</option>
+        <option value="12">12:00</option>
+        <option value="13">13:00</option>
+        <option value="14">14:00</option>
+        <option value="15">15:00</option>
+        <option value="16">16:00</option>
+        <option value="17">17:00</option>
+        <option value="18">18:00</option>
+        <option value="19">19:00</option>
+        <option value="20">20:00</option>
+        <option value="21">21:00</option>
+        <option value="22">22:00</option>
+        <option value="23">23:00</option>
+      </select>
     </div>
     <br><br>
-    <button type="submit" class="btn btn-default btn-block" id="saveButton">Save</button>
-    <button type="button" class="btn btn-default btn-block" id="cancelButton">Cancel</button>
+    <button type="submit" class="btn btn-default btn-block" id="saveButton" onclick="saveButton()">Save</button>
+    <button type="button" class="btn btn-default btn-block" id="cancelButton" onclick="cancelButton()">Cancel</button>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
   <script src="configuration.js"></script>
 </body>
 </html>
