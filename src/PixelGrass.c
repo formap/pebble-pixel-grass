@@ -51,8 +51,14 @@ static void update_time() {
   int currentHour = tick_time->tm_hour;
   if (tick_time->tm_min == 0) {
     if (KEY_VIBRATIONS) {
-      if (currentHour >= KEY_START_HOUR && currentHour <= KEY_END_HOUR) {
-        vibes_double_pulse();
+      if (KEY_START_HOUR <= KEY_END_HOUR) {
+        if (currentHour >= KEY_START_HOUR && currentHour <= KEY_END_HOUR) {
+          vibes_double_pulse();
+        }
+      } else {
+        if (currentHour >= KEY_START_HOUR || currentHour <= KEY_END_HOUR) {
+          vibes_double_pulse();
+        }
       }
     }
   }
